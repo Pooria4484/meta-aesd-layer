@@ -1,0 +1,37 @@
+#!/bin/sh
+### BEGIN INIT INFO
+# Provides:          lddmodules
+# Required-Start:    $remote_fs $syslog
+# Required-Stop:     $remote_fs $syslog
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: Load ldd kernel modules at boot
+# Description:       This script loads the hello and faulty kernel modules.
+### END INIT INFO
+
+case "$1" in
+    start)
+        echo "Loading ldd kernel modules..."
+        /sbin/insmod /lib/modules/$(uname -r)/extra/hello.ko
+        /sbin/insmod /lib/modules/$(uname -r)/extra/faulty.ko
+        /sbin/insmod /lib/modules/$(uname -r)/extra/scull.ko
+        echo "Inserting aesdchar module..."
+        insmod /lib/modules/$(uname -r)/extra/aesdchar.ko
+        ;;
+    stop)
+        echo "Unloading ldd kernel modules..."
+        /sbin/rmmod faulty
+        /sbin/rmmod hello
+        /sbin/rmmod aesdchar
+        ;;
+    restart)
+        $0 stop
+        $0 start
+        ;;
+    *)
+        echo "Usage: $0 {start|stop|restart}"
+        exit 1
+        ;;
+esac
+
+exit 0
